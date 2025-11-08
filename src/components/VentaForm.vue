@@ -74,7 +74,6 @@
               <div>
                 <label class="label">Cantidad</label>
                 <input
-                  type="number"
                   class="input"
                   v-model.number="detalle.cantidad"
                   min="1"
@@ -87,7 +86,6 @@
               <div>
                 <label class="label">Precio unitario</label>
                 <input
-                  type="number"
                   class="input"
                   v-model.number="detalle.precio_unitario"
                   step="0.01"
@@ -215,7 +213,7 @@ function agregarDetalle() {
 function asignarPrecio(detalle) {
   const prod = productos.value.find(p => p.id === detalle.id_producto)
   if (prod) {
-    detalle.precio_unitario = parseFloat(prod.precio) || 0
+    detalle.precio_unitario = parseFloat(prod.precio_unitario) || 0
     calcularSubtotal(detalle)
   }
 }
