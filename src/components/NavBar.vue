@@ -3,7 +3,7 @@
     <div class="container navbar-inner">
       <div class="brand">
         <img
-          src="https://dummyimage.com/40x40/ffffff/000000.png&text=V"
+          src="../recursos/LogoUMGSF.png"
           alt="Logo"
           class="brand-logo"
         />
