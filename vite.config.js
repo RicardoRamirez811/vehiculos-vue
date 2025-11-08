@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => ({
     proxy: {
       '/apiVehiculo': {
         // En dev, Vite reenviará /apiVehiculo/... al host real
-        target: 'http://pruebas.somee.com', // o https si tu API lo soporta
+        target: 'https://pruebas.somee.com', // o https si tu API lo soporta
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/apiVehiculo/, '')
       }
