@@ -53,6 +53,7 @@
 <script setup>
 import { reactive, ref, computed } from 'vue'
 import { ApiVehiculo } from '../services/apiVehiculo'
+import { ApiVenta } from '../services/apiVehiculo'
 
 // 4 campos del formulario
 const form = reactive({

@@ -1,4 +1,4 @@
-const BASE_URL = 'https://pruebas.somee.com/Vehiculo/' /*'https://localhost:7147/Vehiculo/'*/;
+const BASE_URL = 'https://pruebas.somee.com/' /*'https://localhost:7147/Vehiculo/'*/;
 
 /*'https://localhost:7147/Vehiculo/'*/
 
@@ -9,7 +9,7 @@ export class ApiVehiculo {
     //   idColor, idMarca, modelo, nombre,
     //   chasis, motor, activo
     // }
-    const res = await fetch(`${BASE_URL}CrearVehiculo`, {
+    const res = await fetch(`${BASE_URL}Vehiculo/CrearVehiculo`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -26,5 +26,25 @@ export class ApiVehiculo {
       throw new Error(`Error ${res.status}: ${msg}`);
     }
     return data;
+  }
+}
+
+
+
+export class ApiVenta {
+  static async ListarSucursales() {
+    const res = await fetch(`${BASE_URL}api/ventums/ListaProductos`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    const contentType = res.headers.get('Content-Type') || ''
+    const data = contentType.includes('application/json') ? await res.json() : await res.text()
+
+    if (!res.ok) {
+      const msg = typeof data === 'string' ? data : JSON.stringify(data)
+      throw new Error(`Error ${res.status}: ${msg}`)
+    }
+    return data
   }
 }

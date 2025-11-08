@@ -5,5 +5,5 @@
 
 <script setup>
 import NavBar from './components/NavBar.vue'
-import VehiculoForm from './components/VehiculoForm.vue'
+import VehiculoForm from './components/VentaForm.vue'
 </script>

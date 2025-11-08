@@ -12,7 +12,7 @@
 
       <nav class="nav-actions">
         <!-- Opciones sin uso por ahora -->
-        <a class="nav-link" href="#">Inicio</a>
+        <a class="nav-link" href="VentaForm.vue">Venta</a>
         <a class="nav-link" href="#">Acerca</a>
       </nav>
     </div>
