@@ -1,4 +1,4 @@
-const BASE_URL = /*'https://pruebas.somee.com/Vehiculo/'*/ 'https://localhost:7147/Vehiculo/';
+const BASE_URL = 'https://pruebas.somee.com/Vehiculo/' /*'https://localhost:7147/Vehiculo/'*/;
 
 export class ApiVehiculo {
   static async crearVehiculo(payload){
