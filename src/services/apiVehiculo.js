@@ -33,7 +33,7 @@ export class ApiVehiculo {
 
 export class ApiVenta {
   static async ListarSucursales() {
-    const res = await fetch(`${BASE_URL}api/ventums/ListaProductos`, {
+    const res = await fetch(`${BASE_URL}api/ventums/ListarSucursales`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     })
@@ -41,6 +41,20 @@ export class ApiVenta {
     const contentType = res.headers.get('Content-Type') || ''
     const data = contentType.includes('application/json') ? await res.json() : await res.text()
 
+    if (!res.ok) {
+      const msg = typeof data === 'string' ? data : JSON.stringify(data)
+      throw new Error(`Error ${res.status}: ${msg}`)
+    }
+    return data
+  }
+
+  static async ListarProductos() {
+    const res = await fetch(`${BASE_URL}api/ventums/ListaProductos`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    })
+    const contentType = res.headers.get('Content-Type') || ''
+    const data = contentType.includes('application/json') ? await res.json() : await res.text()
     if (!res.ok) {
       const msg = typeof data === 'string' ? data : JSON.stringify(data)
       throw new Error(`Error ${res.status}: ${msg}`)

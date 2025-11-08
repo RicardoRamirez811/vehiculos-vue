@@ -46,33 +46,81 @@
         <div style="grid-column: 1 / -1; margin-top: 1rem;">
           <h3>Detalles de venta</h3>
 
-          <div v-for="(detalle, i) in form.venta_detalles" :key="i" class="card" style="margin-bottom:.5rem;padding:.8rem;">
+          <div
+            v-for="(detalle, i) in form.venta_detalles"
+            :key="i"
+            class="card"
+            style="margin-bottom:.5rem;padding:.8rem;"
+          >
             <div class="row row-3">
+              <!-- Producto -->
               <div>
-                <label class="label">Id Producto</label>
-                <input type="number" class="input" v-model.number="detalle.id_producto" min="1" required />
+                <label class="label" for="producto">Producto</label>
+                <select
+                  id="producto"
+                  class="input"
+                  v-model.number="detalle.id_producto"
+                  @change="asignarPrecio(detalle)"
+                  required
+                >
+                  <option disabled value="">Selecciona un producto</option>
+                  <option v-for="p in productos" :key="p.id" :value="p.id">
+                    {{ p.nombre }}
+                  </option>
+                </select>
               </div>
+
+              <!-- Cantidad -->
               <div>
                 <label class="label">Cantidad</label>
-                <input type="number" class="input" v-model.number="detalle.cantidad" min="1" required @input="calcularSubtotal(detalle)" />
+                <input
+                  type="number"
+                  class="input"
+                  v-model.number="detalle.cantidad"
+                  min="1"
+                  required
+                  @input="calcularSubtotal(detalle)"
+                />
               </div>
+
+              <!-- Precio unitario -->
               <div>
                 <label class="label">Precio unitario</label>
-                <input type="number" class="input" v-model.number="detalle.precio_unitario" step="0.01" min="0" required @input="calcularSubtotal(detalle)" />
+                <input
+                  type="number"
+                  class="input"
+                  v-model.number="detalle.precio_unitario"
+                  step="0.01"
+                  min="0"
+                  required
+                  readonly
+                />
               </div>
             </div>
-            <p style="margin-top:.4rem;"><strong>Subtotal:</strong> Q{{ detalle.subtotal.toFixed(2) }}</p>
 
-            <button type="button" class="btn" style="background:#b00020;color:white" @click="eliminarDetalle(i)">
+            <p style="margin-top:.4rem;">
+              <strong>Subtotal:</strong> Q{{ detalle.subtotal.toFixed(2) }}
+            </p>
+
+            <button
+              type="button"
+              class="btn"
+              style="background:#b00020;color:white"
+              @click="eliminarDetalle(i)"
+            >
               Eliminar
             </button>
           </div>
 
-          <button type="button" class="btn btn-primary" @click="agregarDetalle">Agregar producto</button>
+          <button type="button" class="btn btn-primary" @click="agregarDetalle">
+            Agregar producto
+          </button>
         </div>
 
         <!-- Botones -->
-        <div style="grid-column: 1 / -1; display:flex; gap:.6rem; align-items:center; justify-content:flex-start; margin-top:1rem;">
+        <div
+          style="grid-column: 1 / -1; display:flex; gap:.6rem; align-items:center; justify-content:flex-start; margin-top:1rem;"
+        >
           <button class="btn btn-primary" :disabled="cargando">
             {{ cargando ? 'Enviando...' : 'Registrar venta' }}
           </button>
@@ -83,7 +131,9 @@
       <!-- Respuesta -->
       <details v-if="respuesta" style="margin-top:1rem;">
         <summary><strong>Respuesta</strong></summary>
-        <pre style="white-space:pre-wrap;background:#0f172a; color:#e2e8f0; padding:1rem; border-radius:.6rem; overflow:auto;">
+        <pre
+          style="white-space:pre-wrap;background:#0f172a; color:#e2e8f0; padding:1rem; border-radius:.6rem; overflow:auto;"
+        >
 {{ respuestaBonita }}
         </pre>
       </details>
@@ -97,7 +147,6 @@
 import { reactive, ref, computed, onMounted } from 'vue'
 import { ApiVenta } from '../services/apiVehiculo'
 
-// Datos del formulario principal
 const form = reactive({
   id_sucursal: '',
   fecha: new Date().toISOString().split('T')[0],
@@ -108,22 +157,25 @@ const form = reactive({
 })
 
 const sucursales = ref([])
+const productos = ref([])
 const cargando = ref(false)
 const respuesta = ref(null)
 const error = ref('')
 
-// Computed para mostrar respuesta
+// Mostrar respuesta bonita
 const respuestaBonita = computed(() =>
   typeof respuesta.value === 'string'
     ? respuesta.value
     : JSON.stringify(respuesta.value, null, 2)
 )
 
-// Al montar, listar sucursales
+// Montaje inicial
 onMounted(async () => {
   await listarSucursales()
+  await listarProductos()
 })
 
+// Listar sucursales
 async function listarSucursales() {
   try {
     cargando.value = true
@@ -136,20 +188,36 @@ async function listarSucursales() {
   }
 }
 
+// Listar productos
+async function listarProductos() {
+  try {
+    cargando.value = true
+    const data = await ApiVenta.ListarProductos()
+    productos.value = Array.isArray(data) ? data : []
+  } catch (err) {
+    error.value = err?.message ?? 'Error al listar productos'
+  } finally {
+    cargando.value = false
+  }
+}
+
 // Agregar detalle
 function agregarDetalle() {
   form.venta_detalles.push({
-    id_producto: 0,
+    id_producto: '',
     cantidad: 1,
     precio_unitario: 0,
     subtotal: 0
   })
 }
 
-// Eliminar detalle
-function eliminarDetalle(index) {
-  form.venta_detalles.splice(index, 1)
-  calcularTotal()
+// Asignar precio al seleccionar producto
+function asignarPrecio(detalle) {
+  const prod = productos.value.find(p => p.id === detalle.id_producto)
+  if (prod) {
+    detalle.precio_unitario = parseFloat(prod.precio) || 0
+    calcularSubtotal(detalle)
+  }
 }
 
 // Calcular subtotal
@@ -161,6 +229,12 @@ function calcularSubtotal(detalle) {
 // Calcular total general
 function calcularTotal() {
   form.totalq = form.venta_detalles.reduce((acc, d) => acc + d.subtotal, 0)
+}
+
+// Eliminar detalle
+function eliminarDetalle(index) {
+  form.venta_detalles.splice(index, 1)
+  calcularTotal()
 }
 
 // Resetear formulario
@@ -175,7 +249,7 @@ function resetear() {
   error.value = ''
 }
 
-// Enviar a API (solo ejemplo)
+// Enviar venta
 async function enviar() {
   error.value = ''
   respuesta.value = null

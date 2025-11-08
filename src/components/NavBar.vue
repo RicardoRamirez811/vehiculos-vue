@@ -7,7 +7,7 @@
           alt="Logo"
           class="brand-logo"
         />
-        <span class="brand-text">Vehículos</span>
+        <span class="brand-text">Ventas Final Des WEb</span>
       </div>
 
       <nav class="nav-actions">
